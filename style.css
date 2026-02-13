@@ -1,0 +1,65 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background: #f9f9f9;
+}
+
+h2 {
+  color: #2c3e50;
+}
+
+label {
+  display: inline-block;
+  width: 180px;
+  margin-top: 10px;
+}
+
+input {
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+button {
+  margin: 10px 5px;
+  padding: 8px 12px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+#confirmation {
+  margin-top: 15px;
+  font-style: italic;
+  color: #16a085;
+}
+
+/* Rating stars */
+.rating-stars span {
+  font-size: 28px;
+  cursor: pointer;
+  color: gray;
+  transition: color 0.3s;
+}
+
+/* Animated rating bar */
+.rating-bar-container {
+  width: 100%;
+  background: #ddd;
+  height: 20px;
+  border-radius: 10px;
+  margin-top: 5px;
+}
+
+.rating-bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #f39c12, #e67e22);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
