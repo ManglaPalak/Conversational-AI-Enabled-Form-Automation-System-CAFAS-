@@ -1,10 +1,10 @@
 {
   "formName": "User Survey",
   "fields": [
-    {"type": "text", "id": "name", "label": "Name"},
-    {"type": "date", "id": "dob", "label": "Date of Birth"},
-    {"type": "checkbox", "id": "interests", "label": "Interests", "options": ["Music", "Sports", "Tech"]},
-    {"type": "radio", "id": "gender", "label": "Gender", "options": ["Male", "Female", "Other"]},
-    {"type": "rating", "id": "satisfaction", "label": "Satisfaction (1-5)"}
+    { "type": "text", "id": "name", "label": "Name" },
+    { "type": "date", "id": "dob", "label": "Date of Birth" },
+    { "type": "checkbox", "id": "interests", "label": "Interests", "options": ["Music", "Sports", "Tech"] },
+    { "type": "radio", "id": "gender", "label": "Gender", "options": ["Male", "Female", "Other"] },
+    { "type": "rating", "id": "satisfaction", "label": "Satisfaction (1-5)" }
   ]
 }

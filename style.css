@@ -1,65 +1,64 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background: #f9f9f9;
-}
-
-h2 {
-  color: #2c3e50;
-}
-
-label {
-  display: inline-block;
-  width: 180px;
-  margin-top: 10px;
-}
-
-input {
-  margin-bottom: 10px;
-  padding: 5px;
-}
-
-button {
-  margin: 10px 5px;
-  padding: 8px 12px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-button:hover {
-  background-color: #2980b9;
-}
-
-#confirmation {
-  margin-top: 15px;
-  font-style: italic;
-  color: #16a085;
-}
-
-/* Rating stars */
-.rating-stars span {
-  font-size: 28px;
-  cursor: pointer;
-  color: gray;
-  transition: color 0.3s;
-}
-
-/* Animated rating bar */
-.rating-bar-container {
+/* Progress bar styling */
+.progress-container {
   width: 100%;
   background: #ddd;
   height: 20px;
   border-radius: 10px;
-  margin-top: 5px;
+  margin-bottom: 15px;
 }
 
-.rating-bar {
+.progress-bar {
   height: 100%;
   width: 0;
-  background: linear-gradient(90deg, #f39c12, #e67e22);
+  background: linear-gradient(90deg, #3498db, #2ecc71);
   border-radius: 10px;
   transition: width 0.5s ease;
+}
+
+/* Mic indicator */
+.mic-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: red;
+  margin: 10px;
+  display: inline-block;
+  opacity: 0.3;
+  transition: opacity 0.5s ease;
+}
+
+.mic-indicator.active {
+  opacity: 1;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+/* Rating stars */
+.star {
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.star:hover {
+  color: gold;
+}
+button {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  background: #3498db;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #2ecc71;
 }
