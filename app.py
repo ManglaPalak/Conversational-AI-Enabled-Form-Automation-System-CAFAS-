@@ -125,7 +125,6 @@ def index():
 
 @app.route('/process-voice', methods=['POST'])
 def process_voice():
-
     transcript = request.json.get('text', '')
     clean_text = normalize_text(transcript)
 
@@ -133,7 +132,7 @@ def process_voice():
 
     name = extract_name(clean_text)
     if name:
-        extracted["fullName"] = name
+        extracted["name"] = name   # changed from fullName
 
     email = extract_email(clean_text)
     if email:
@@ -149,18 +148,17 @@ def process_voice():
 
     interests = extract_interests(clean_text)
     if interests:
-        extracted["interests"] = interests
+        extracted["interest"] = interests   # changed from interests
 
     rating = extract_rating(clean_text)
     if rating:
-        extracted["satisfaction"] = rating
+        extracted["rating"] = rating   # changed from satisfaction
 
     return jsonify({
         "data": extracted,
         "status": "Mapped successfully" if extracted else "No clear data found",
         "raw_transcript": transcript
     })
-
 
 if __name__ == '__main__':
     app.run(debug=True)
