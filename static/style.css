@@ -7,7 +7,8 @@ body {
 
 /* Container */
 .container {
-    width: 700px;
+    max-width: 700px;
+    width: 90%;
     margin: 40px auto;
     background: white;
     padding: 25px;
@@ -173,4 +174,62 @@ input {
 @keyframes wave {
     0%,100% { height: 10px; }
     50% { height: 30px; }
+}
+/* ================= FIELD CARD (CRITICAL FIX) ================= */
+.field-card {
+    padding: 15px;
+    border-radius: 10px;
+    background: #f9faff;
+    border: 1px solid #e0e6ff;
+    transition: all 0.3s ease;
+}
+
+/* 🔵 Active field (currently being asked) */
+.field-active {
+    border: 2px solid #2f5de2;
+    background: #eef3ff;
+    transform: scale(1.02);
+}
+
+/* 🟢 Filled field */
+.field-filled {
+    border: 2px solid #27ae60;
+    background: #f0fff5;
+}
+
+/* Field status text */
+.field-status {
+    font-size: 12px;
+    color: #27ae60;
+    margin-top: 5px;
+}
+
+/* ================= WAVEFORM FIX ================= */
+#waveform {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 10px;
+}
+
+/* Hidden state */
+.hidden {
+    display: none;
+}
+
+/* Bars inside waveform */
+#waveform span {
+    width: 4px;
+    height: 15px;
+    background: #2f5de2;
+    animation: wave 1s infinite ease-in-out;
+}
+
+#waveform span:nth-child(2) { animation-delay: 0.2s; }
+#waveform span:nth-child(3) { animation-delay: 0.4s; }
+#waveform span:nth-child(4) { animation-delay: 0.6s; }
+
+/* ================= SCROLL SMOOTH ================= */
+html {
+    scroll-behavior: smooth;
 }

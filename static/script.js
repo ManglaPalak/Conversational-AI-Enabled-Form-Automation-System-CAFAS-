@@ -19,7 +19,7 @@ const recognition = new SpeechRecognition();
 recognition.interimResults = false;
 recognition.continuous = false;
 
-/* 🔥 SAFE START FIX */
+/* 🔥 SAFE START */
 function safeStartRecognition() {
   try {
     recognition.start();
@@ -30,6 +30,7 @@ function safeStartRecognition() {
   }
 }
 
+/* ================= VOICES ================= */
 let voices = [];
 speechSynthesis.onvoiceschanged = () => {
   voices = speechSynthesis.getVoices();
@@ -41,16 +42,16 @@ function speak(text, callback) {
 
   speechSynthesis.cancel();
 
-  let voices = speechSynthesis.getVoices();
-
   const lang = document.getElementById("lang").value || "en-US";
+  recognition.lang = lang;
 
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = lang;
 
-  const voice = voices.find(v => v.lang === lang) 
-             || voices.find(v => v.lang.startsWith(lang.split('-')[0]))
-             || voices[0];
+  const voice =
+    voices.find(v => v.lang === lang) ||
+    voices.find(v => v.lang.startsWith(lang.split('-')[0])) ||
+    voices[0];
 
   if (voice) utterance.voice = voice;
 
@@ -101,15 +102,37 @@ function renderForm() {
     }
 
     card.innerHTML += `<div class="field-status" id="${field.id}_status"></div>`;
-
     form.appendChild(card);
   });
+}
+
+/* ================= SMART NAV ================= */
+function getNextUnfilledFieldIndex() {
+  for (let i = 0; i < fields.length; i++) {
+    const f = fields[i];
+    const el = document.getElementById(f.id);
+
+    if (f.type === "radio") {
+      if (![...document.getElementsByName(f.id)].some(r => r.checked)) return i;
+    }
+    else if (f.type === "checkbox") {
+      if (![...document.querySelectorAll(`#card_${f.id} input:checked`)].length) return i;
+    }
+    else if (!el || !el.value) {
+      return i;
+    }
+  }
+  return fields.length;
 }
 
 /* ================= FILL ================= */
 function fillField(field, value) {
 
   if (!value) return;
+
+  // 🔥 prevent overwrite
+  const existing = document.getElementById(field.id);
+  if (existing && existing.value && field.type === "text") return;
 
   const card = document.getElementById("card_" + field.id);
   if (card) {
@@ -140,13 +163,15 @@ function fillField(field, value) {
 
   const status = document.getElementById(field.id + "_status");
   if (status) status.innerText = "✔ Filled";
+
+  updateProgressBar();
 }
 
 /* ================= PROMPT ================= */
 function promptNextField() {
   if (!assistantActive) return;
 
-  updateProgressBar();
+  currentFieldIndex = getNextUnfilledFieldIndex();
 
   if (currentFieldIndex >= fields.length) {
     speak("All fields completed. Submitting your form now.", saveData);
@@ -164,12 +189,12 @@ function promptNextField() {
   }
 
   const prompts = {
-    name: "Please tell me your full name",
-    email: "Please say your email address",
-    dob: "Please tell your date of birth",
-    gender: "Please say your gender: male, female or other",
-    interest: "Tell me your interests like music, sports or tech",
-    rating: "Rate your satisfaction from 1 to 5"
+    name: "Tell me your full name",
+    email: "Say your email address",
+    dob: "Tell your date of birth",
+    gender: "Say male, female or other",
+    interest: "Tell interests like music or sports",
+    rating: "Rate from 1 to 5"
   };
 
   speak(prompts[field.id], () => safeStartRecognition());
@@ -178,19 +203,17 @@ function promptNextField() {
 /* ================= VOICE ================= */
 recognition.onstart = () => {
   document.getElementById("micIndicator").classList.add("active");
-  document.getElementById("waveform")?.classList.remove("hidden");
 };
 
 recognition.onend = () => {
   document.getElementById("micIndicator").classList.remove("active");
-  document.getElementById("waveform")?.classList.add("hidden");
 
   if (assistantActive) {
     setTimeout(() => safeStartRecognition(), 200);
   }
 };
 
-/* ================= VOICE RESULT ================= */
+/* ================= RESULT ================= */
 recognition.onresult = async (event) => {
 
   const transcript = event.results[0][0].transcript;
@@ -200,10 +223,23 @@ recognition.onresult = async (event) => {
     const res = await fetch("/process-voice", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ text: transcript })
+      body: JSON.stringify({
+        text: transcript,
+        currentField: fields[currentFieldIndex].id
+      })
     });
 
     const data = await res.json();
+
+    if (data.intent === "SUBMIT") {
+      speak("Submitting now.", saveData);
+      return;
+    }
+
+    if (data.confidence < 0.2) {
+      speak("Please repeat.", () => safeStartRecognition());
+      return;
+    }
 
     if (data.data && Object.keys(data.data).length > 0) {
 
@@ -212,15 +248,13 @@ recognition.onresult = async (event) => {
         if (field) fillField(field, data.data[key]);
       });
 
-      currentFieldIndex++;
-
     } else {
       speak("I didn't understand. Please repeat.", () => safeStartRecognition());
       return;
     }
 
   } catch (err) {
-    speak("Connection error. Please repeat.", () => safeStartRecognition());
+    speak("Connection error. Try again.", () => safeStartRecognition());
     return;
   }
 
@@ -237,7 +271,24 @@ recognition.onerror = () => {
 function updateProgressBar() {
   const bar = document.getElementById("progressBar");
   if (!bar) return;
-  bar.style.width = ((currentFieldIndex / fields.length) * 100) + "%";
+
+  let filled = 0;
+
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+
+    if (f.type === "radio") {
+      if ([...document.getElementsByName(f.id)].some(r => r.checked)) filled++;
+    }
+    else if (f.type === "checkbox") {
+      if ([...document.querySelectorAll(`#card_${f.id} input:checked`)].length) filled++;
+    }
+    else if (el && el.value) {
+      filled++;
+    }
+  });
+
+  bar.style.width = ((filled / fields.length) * 100) + "%";
 }
 
 /* ================= SAVE ================= */
@@ -255,18 +306,13 @@ function saveData() {
     body: JSON.stringify(data)
   });
 
-  speak("Your form has been submitted successfully. Thank you.");
+  speak("Form submitted successfully. Thank you.");
 }
 
 /* ================= INIT ================= */
 window.onload = () => {
-  // preload voices properly
-  speechSynthesis.onvoiceschanged = () => {
-    voices = speechSynthesis.getVoices();
-  };
-  voices = speechSynthesis.getVoices();
 
-  // render dynamic form if using #userForm
+  voices = speechSynthesis.getVoices();
   renderForm();
 
   document.getElementById("startAssistant").onclick = () => {
@@ -274,17 +320,15 @@ window.onload = () => {
     currentFieldIndex = 0;
 
     speechSynthesis.cancel();
-
     recognition.lang = document.getElementById("lang").value;
 
-    speak("Assistant started. Let's begin.", promptNextField);
+    speak("Assistant started.", promptNextField);
   };
 
   document.getElementById("stopAssistant").onclick = () => {
     assistantActive = false;
     recognition.stop();
     speechSynthesis.cancel();
-    document.getElementById("confirmation").innerText = "Assistant stopped.";
   };
 
   document.getElementById("muteBtn").onclick = () => {
@@ -293,7 +337,6 @@ window.onload = () => {
     if (isMuted) {
       speechSynthesis.cancel();
       recognition.stop();
-      document.getElementById("confirmation").innerText = "Muted";
     } else {
       speak("Resuming.", promptNextField);
     }

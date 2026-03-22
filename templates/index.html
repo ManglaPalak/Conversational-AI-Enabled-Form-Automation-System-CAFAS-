@@ -25,7 +25,10 @@
       <option value="de-DE">German (Germany)</option>
       <option value="zh-CN">Chinese (China)</option>
     </select>
+
+    <!-- ✅ SINGLE waveform -->
     <div id="waveform" class="hidden"></div>
+
     <div class="btns">
       <button id="startAssistant" class="start">🎤 Start Assistant</button>
       <button id="stopAssistant" class="stop">⏹ Stop Assistant</button>
@@ -33,7 +36,6 @@
     </div>
 
     <div id="micIndicator">🎤</div>
-    <div id="waveform" class="hidden"></div> <!-- 🔥 Added -->
     <div id="confirmation"></div>
     <p id="statusText"></p>
   </div>
@@ -45,67 +47,8 @@
 
   <hr>
 
-  <!-- FORM GRID -->
-  <div class="form-grid">
-    <!-- NAME -->
-    <div class="form-group">
-      <label>Full Name</label>
-      <input type="text" id="name">
-      <small id="name_status"></small>
-    </div>
-
-    <!-- EMAIL -->
-    <div class="form-group">
-      <label>Email Address</label>
-      <input type="text" id="email" placeholder="Say: My email is example@gmail.com">
-      <small id="email_status"></small>
-    </div>
-
-    <!-- DOB -->
-    <div class="form-group">
-      <label>Date of Birth</label>
-      <input type="date" id="dob">
-      <small id="dob_status"></small>
-    </div>
-
-    <!-- GENDER -->
-    <div class="form-group">
-      <label>Gender</label>
-      <div class="options">
-        <label><input type="radio" name="gender" value="Male" id="gender_Male"> Male</label>
-        <label><input type="radio" name="gender" value="Female" id="gender_Female"> Female</label>
-        <label><input type="radio" name="gender" value="Other" id="gender_Other"> Other</label>
-      </div>
-      <small id="gender_status"></small>
-    </div>
-  </div>
-
-  <!-- INTERESTS -->
-  <div class="form-group">
-    <label>Interests</label>
-    <div class="options">
-      <label><input type="checkbox" value="Music" id="interest_Music"> Music</label>
-      <label><input type="checkbox" value="Sports" id="interest_Sports"> Sports</label>
-      <label><input type="checkbox" value="Tech" id="interest_Tech"> Tech</label>
-    </div>
-    <small id="interest_status"></small>
-  </div>
-
-  <!-- RATING -->
-  <div class="form-group">
-    <label>Satisfaction</label>
-    <div id="stars">
-      <span class="star" data-value="1">★</span>
-      <span class="star" data-value="2">★</span>
-      <span class="star" data-value="3">★</span>
-      <span class="star" data-value="4">★</span>
-      <span class="star" data-value="5">★</span>
-    </div>
-    <input type="hidden" id="rating">
-    <small id="rating_status"></small>
-  </div>
-  <!-- Dynamic form container -->
-  <div id="userForm"></div>
+  <!-- ✅ ONLY ONE FORM SOURCE (JS will render cards here) -->
+  <div id="userForm" class="form-grid"></div>
 
   <!-- PROGRESS -->
   <div class="progress-container">
